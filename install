@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+
+cp prompt-to-win /etc/initramfs-tools/hooks
+update-initramfs -u

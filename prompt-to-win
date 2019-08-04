@@ -1,0 +1,26 @@
+#!/bin/sh
+set -eu
+
+test "${1-}" = "prereqs" && exit
+
+script="$(cat << "EOF"
+if test "$1" = "win"; then
+  cryptsetup_message "Booting Windows"
+  mkdir -p /sys/firmware/efi/efivars
+  mount -t efivarfs efivarfs /sys/firmware/efi/efivars
+  printf '\7\0\0\0\0\0' > /sys/firmware/efi/efivars/BootNext-8be4df61-93ca-11d2-aa0d-00e098032b8c
+  umount /sys/firmware/efi/efivars
+  sleep 1
+  reboot
+  sleep 10
+  cryptsetup_message "Failed to reboot"
+  sleep 3
+fi
+EOF
+)"
+
+sed -i \
+  '/run_keyscript/s#|#| (set -- "$(cat)"; '"$(
+    printf "%s" "$script" | sed 's/\\\|&\|#/\\&/g; $!s/$/\\/'
+  )"'; printf "%s" "$1") |#' \
+  "$DESTDIR"/scripts/local-top/cryptroot
