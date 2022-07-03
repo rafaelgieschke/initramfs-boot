@@ -1,0 +1,11 @@
+#!/bin/sh -eu
+
+DISK="/dev/nvme0n1"
+
+(
+    cd -- "$(dirname -- "$(realpath -- "$0")")"
+    make ioctl-blkflsbuf
+    ./ioctl-blkflsbuf "$DISK"
+)
+
+exec qemu-system-x86_64 -enable-kvm -bios /usr/share/qemu/OVMF.fd -m 4G -snapshot "$DISK"
