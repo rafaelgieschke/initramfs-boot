@@ -11,7 +11,7 @@ if test "$1" = "win"; then
   printf '\7\0\0\0\0\0' > /sys/firmware/efi/efivars/BootNext-8be4df61-93ca-11d2-aa0d-00e098032b8c
   umount /sys/firmware/efi/efivars
   sleep 1
-  reboot
+  reboot -f
   sleep 10
   cryptsetup_message "Failed to reboot"
   sleep 3
